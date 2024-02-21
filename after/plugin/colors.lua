@@ -1,6 +1,6 @@
 function ColorMyPencils(color)
     -- color = color or 'kanagawa-dragon'
-    color = color or 'kanagawa-dragon'
+    color = color or 'nordfox'
     vim.cmd.colorscheme(color)
 
     -- If you do not want the transparent window effect remove these

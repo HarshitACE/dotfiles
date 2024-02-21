@@ -20,6 +20,20 @@ lsp.configure('lua-language-server', {
     }
 })
 
+
+-- Go LSP
+lsp.configure('gopls',{
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
+      gofumpt = true,
+    },
+  },
+})
+
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
