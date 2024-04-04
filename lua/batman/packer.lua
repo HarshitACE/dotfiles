@@ -36,6 +36,22 @@ return require('packer').startup(function(use)
         end
     }
 
+    -- Dev Containers
+    use { 'https://codeberg.org/esensar/nvim-dev-container',
+        config = require("devcontainer").setup{}
+    }
+
+    -- NeoTest
+    use {
+      "nvim-neotest/neotest",
+      requires = {
+        "nvim-neotest/nvim-nio",
+        "nvim-lua/plenary.nvim",
+        "antoinemadec/FixCursorHold.nvim",
+        "nvim-treesitter/nvim-treesitter"
+      }
+    }
+
     use { "EdenEast/nightfox.nvim" }
 
     use({
@@ -101,7 +117,7 @@ return require('packer').startup(function(use)
     use { 'github/copilot.vim' }
 
     use {
-        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        'nvim-telescope/telescope.nvim', tag = '0.1.4',
         -- or                            , branch = '0.1.x',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }

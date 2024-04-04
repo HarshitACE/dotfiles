@@ -2,12 +2,18 @@ require("batman.remap")
 require("batman.set")
 print("Welcome, Master Bruce.")
 
--- Friendship ended with tabnine, now copilot is my best friend
--- require('tabnine').setup({
---   disable_auto_comment=true,
---   accept_keymap="<Tab>",
---   dismiss_keymap = "<C-]>",
---   debounce_ms = 800,
---   suggestion_color = {gui = "#808080", cterm = 244},
---   exclude_filetypes = {"TelescopePrompt"}
--- })
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Load Lazy Nvim
+require("lazy").setup("plugins")

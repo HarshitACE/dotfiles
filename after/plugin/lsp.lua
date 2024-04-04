@@ -2,82 +2,97 @@ local lsp = require('lsp-zero')
 
 lsp.preset('recommended')
 
+require("mason-lspconfig").setup()
 
-lsp.ensure_installed({
-    'tsserver',
-    'rust_analyzer',
-    'eslint',
-})
+require("mason-lspconfig").setup_handlers {
+    -- The first entry (without a key) will be the default handler
+    -- and will be called for each installed server that doesn't have
+    -- a dedicated handler.
+    function(server_name)  -- default handler (optional)
+        require("lspconfig")[server_name].setup {}
+    end,
+    -- Next, you can provide a dedicated handler for specific servers.
+    -- For example, a handler override for the `rust_analyzer`:
+    ["rust_analyzer"] = function()
+        require("rust-tools").setup {}
+    end,
 
--- Fix Undefined global 'vim'
-lsp.configure('lua-language-server', {
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' }
+    ["omnisharp_mono"] = function()
+        local lspconfig = require("lspconfig")
+        lspconfig.omnisharp_mono.setup
+        {
+            -- settings from .editorconfig.
+            enable_editorconfig_support = true,
+
+            -- If true, MSBuild project system will only load projects for files that
+            -- were opened in the editor. This setting is useful for big C# codebases
+            -- and allows for faster initialization of code navigation features only
+            -- for projects that are relevant to code that is being edited. With this
+            -- setting enabled OmniSharp may load fewer projects and may thus display
+            -- incomplete reference lists for symbols.
+            enable_ms_build_load_projects_on_demand = false,
+
+            -- Enables support for roslyn analyzers, code fixes and rulesets.
+            enable_roslyn_analyzers = false,
+
+            -- Specifies whether 'using' directives should be grouped and sorted during
+            -- document formatting.
+            organize_imports_on_format = false,
+
+            -- Enables support for showing unimported types and unimported extension
+            -- methods in completion lists. When committed, the appropriate using
+            -- directive will be added at the top of the current file. This option can
+            -- have a negative impact on initial completion responsiveness,
+            -- particularly for the first few completion sessions after opening a
+            -- solution.
+            enable_import_completion = false,
+
+            -- Specifies whether to include preview versions of the .NET SDK when
+            -- determining which version to use for project loading.
+            sdk_include_prereleases = true,
+
+            -- Only run analyzers against open files when 'enableRoslynAnalyzers' is
+            -- true
+            analyze_open_documents_only = false,
+        }
+    end,
+
+    ["lua_ls"] = function()
+        local lspconfig = require("lspconfig")
+        lspconfig.lua_ls.setup {
+            on_init = function(client)
+                local path = client.workspace_folders[1].name
+                if vim.loop.fs_stat(path .. '/.luarc.json') or vim.loop.fs_stat(path .. '/.luarc.jsonc') then
+                    return
+                end
+
+                client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+                    runtime = {
+                        -- Tell the language server which version of Lua you're using
+                        -- (most likely LuaJIT in the case of Neovim)
+                        version = 'LuaJIT'
+                    },
+                    -- Make the server aware of Neovim runtime files
+                    workspace = {
+                        checkThirdParty = false,
+                        library = {
+                            vim.env.VIMRUNTIME
+                            -- Depending on the usage, you might want to add additional paths here.
+                            -- "${3rd}/luv/library"
+                            -- "${3rd}/busted/library",
+                        }
+                        -- or pull in all of 'runtimepath'. NOTE: this is a lot slower
+                        -- library = vim.api.nvim_get_runtime_file("", true)
+                    }
+                })
+            end,
+            settings = {
+                Lua = {}
             }
         }
-    }
-})
-
-local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-    ["<C-Space>"] = cmp.mapping.complete(),
-})
-
-local lspkind = require('lspkind')
-cmp.setup {
-    formatting = {
-        format = lspkind.cmp_format({
-            mode = 'symbol_text',  -- show only symbol annotations
-            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-            preset = 'default',
-            symbol_map = {
-                Text = "󰉿",
-                Method = "󰆧",
-                Function = "󰊕",
-                Constructor = "",
-                Field = "󰜢",
-                Variable = "󰀫",
-                Class = "󰠱",
-                Interface = "",
-                Module = "",
-                Property = "󰜢",
-                Unit = "󰑭",
-                Value = "󰎠",
-                Enum = "",
-                Keyword = "󰌋",
-                Snippet = "",
-                Color = "󰏘",
-                File = "󰈙",
-                Reference = "󰈇",
-                Folder = "󰉋",
-                EnumMember = "",
-                Constant = "󰏿",
-                Struct = "󰙅",
-                Event = "",
-                Operator = "󰆕",
-                TypeParameter = "",
-            },
-
-
-            -- The function below will be called before any actual modifications from lspkind
-            -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-        })
-    }
+    end
 }
 
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
-
-lsp.setup_nvim_cmp({
-    mapping = cmp_mappings
-})
 
 lsp.set_preferences({
     suggest_lsp_servers = true,
