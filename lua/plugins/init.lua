@@ -36,21 +36,6 @@ return {
       end,
     },
   
-    {
-      "hrsh7th/nvim-cmp",
-      -- load cmp on InsertEnter
-      event = "InsertEnter",
-      -- these dependencies will only be loaded when cmp loads
-      -- dependencies are always lazy-loaded unless specified otherwise
-      dependencies = {
-        "hrsh7th/cmp-nvim-lsp",
-        "hrsh7th/cmp-buffer",
-      },
-      config = function()
-        -- ...
-      end,
-    },
-  
     -- if some code requires a module from an unloaded plugin, it will be automatically loaded.
     -- So for api plugins like devicons, we can always set lazy=true
     { "nvim-tree/nvim-web-devicons", lazy = true },
@@ -79,7 +64,6 @@ return {
   
     -- you can use a custom url to fetch a plugin
     { url = "git@github.com:folke/noice.nvim.git" },
-  
     -- local plugins can also be configure with the dev option.
     -- This will use {config.dev.path}/noice.nvim/ instead of fetching it from Github
     -- With the dev option, you can easily switch between the local and installed version of a plugin
@@ -119,6 +103,116 @@ return {
         "neovim/nvim-lspconfig",
     },
 
+    {
+      "hrsh7th/nvim-cmp",
+      -- load cmp on InsertEnter
+      event = "InsertEnter",
+      -- these dependencies will only be loaded when cmp loads
+      -- dependencies are always lazy-loaded unless specified otherwise
+      dependencies = {
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-buffer",
+      },
+      opts = function()
+          local cmp_status, cmp = pcall(require, "cmp")
+          local lspkind = require('lspkind')
+          if not cmp_status then
+              print(cmp_status)
+              return
+          end
+
+          return {
+              cmp.setup({
+                  mapping = cmp.mapping.preset.insert({
+                      ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
+                      ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
+                      ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+                      ["<C-f>"] = cmp.mapping.scroll_docs(4),
+                      ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
+                      ["<C-e>"] = cmp.mapping.abort(), -- close completion window
+                      ["<CR>"] = cmp.mapping.confirm({ select = false }),
+                  }),
+                  -- sources for autocompletion
+                  sources = cmp.config.sources({
+                      { name = "nvim_lsp" }, -- LSP
+                      { name = "buffer" }, -- text within the current buffer
+                      { name = "path" }, -- file system paths
+                  }),
+              }),
+
+              -- Set configuration for specific filetype.
+              cmp.setup.filetype('gitcommit', {
+                  sources = cmp.config.sources({
+                      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+                  }, {
+                      { name = 'buffer' },
+                  })
+              }),
+
+              -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+              cmp.setup.cmdline({ '/', '?' }, {
+                  mapping = cmp.mapping.preset.cmdline(),
+                  sources = {
+                      { name = "nvim_lsp" },
+                      { name = 'buffer' },
+                      { name = 'path' },
+                  }
+              }),
+
+              -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+              cmp.setup.cmdline(':', {
+                  mapping = cmp.mapping.preset.cmdline(),
+                  sources = cmp.config.sources({
+                      { name = 'path' }
+                  }, {
+                      { name = 'cmdline' }
+                  }),
+                  matching = { disallow_symbol_nonprefix_matching = false }
+              }),
+
+              cmp.setup {
+                  formatting = {
+                      format = lspkind.cmp_format({
+                          mode = 'symbol_text',  -- show only symbol annotations
+                          maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+                          ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+                          preset = 'default',
+                          symbol_map = {
+                              Text = "󰉿",
+                              Method = "󰆧",
+                              Function = "󰊕",
+                              Constructor = "",
+                              Field = "󰜢",
+                              Variable = "󰀫",
+                              Class = "󰠱",
+                              Interface = "",
+                              Module = "",
+                              Property = "󰜢",
+                              Unit = "󰑭",
+                              Value = "󰎠",
+                              Enum = "",
+                              Keyword = "󰌋",
+                              Snippet = "",
+                              Color = "󰏘",
+                              File = "󰈙",
+                              Reference = "󰈇",
+                              Folder = "󰉋",
+                              EnumMember = "",
+                              Constant = "󰏿",
+                              Struct = "󰙅",
+                              Event = "",
+                              Operator = "󰆕",
+                              TypeParameter = "",
+                          },
+
+                          -- The function below will be called before any actual modifications from lspkind
+                          -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+                      })
+                  }
+              }
+          }
+      end,
+    },
     -- Debugging and Debugger
     { "mfussenegger/nvim-dap" },
     { "rcarriga/nvim-dap-ui" },
@@ -378,6 +472,14 @@ return {
         'nvim-telescope/telescope.nvim', tag = '0.1.6',
 -- or                              , branch = '0.1.x',
           dependencies = { 'nvim-lua/plenary.nvim' }
+    },
+    { 'MaximilianLloyd/ascii.nvim', dependencies = { 'MunifTanjim/nui.nvim' } },
+    {
+        "L3MON4D3/LuaSnip",
+        -- follow latest release.
+        version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+        -- install jsregexp (optional!).
+        build = "make install_jsregexp"
     }
   }
 
