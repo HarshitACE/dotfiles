@@ -84,6 +84,14 @@ return {
     -- With the dev option, you can easily switch between the local and installed version of a plugin
     { "folke/noice.nvim",                         dev = true },
 
+    -- Markdown Preview
+    {
+        "iamcco/markdown-preview.nvim",
+        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+        ft = { "markdown" },
+        build = function() vim.fn["mkdp#util#install"]() end,
+    },
+
     -- Code Editing
     {
         "windwp/nvim-autopairs",
@@ -241,21 +249,14 @@ return {
     {
         'https://codeberg.org/esensar/nvim-dev-container',
         dependencies = 'nvim-treesitter/nvim-treesitter',
-    },
-
-    -- Ricing
-    { 'nanozuki/tabby.nvim' },
-    {
-        'nvim-lualine/lualine.nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = function()
-            require("devcontainer").setup {
+            require("devcontainer").setup({
                 attach_mounts = {
                     neovim_config = {
                         -- enables mounting local config to /root/.config/nvim in container
-                        enabled = false,
+                        enabled = true,
                         -- makes mount readonly in container
-                        options = { "readonly" }
+                        options = { "readonly" },
                     },
                     neovim_data = {
                         -- enables mounting local data to /root/.local/share/nvim in container
@@ -271,8 +272,15 @@ return {
                         options = {}
                     },
                 },
-            }
-        end
+            })
+        end,
+    },
+
+    -- Ricing
+    { 'nanozuki/tabby.nvim' },
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
     },
     {
         "nvim-neo-tree/neo-tree.nvim",

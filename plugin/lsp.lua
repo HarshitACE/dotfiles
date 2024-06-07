@@ -13,10 +13,6 @@ require("mason-lspconfig").setup_handlers {
     end,
     -- Next, you can provide a dedicated handler for specific servers.
     -- For example, a handler override for the `rust_analyzer`:
-    ["rust_analyzer"] = function()
-        require("rust-tools").setup {}
-    end,
-
     ["omnisharp_mono"] = function()
         local lspconfig = require("lspconfig")
         lspconfig.omnisharp_mono.setup
@@ -117,7 +113,7 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
     vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+    vim.keymap.set("i", "<C-s>", function() vim.lsp.buf.signature_help() end, opts)
 end)
 
 lsp.setup()
