@@ -14,7 +14,7 @@ return {
   -- },
   {
     "folke/tokyonight.nvim",
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require("tokyonight").setup({
@@ -23,6 +23,55 @@ return {
       vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
+  -- {
+  --   "gbprod/nord.nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require("nord").setup({})
+  --     vim.cmd.colorscheme("nord")
+  --   end,
+  -- },
+  --  {
+  --    "rmehri01/onenord.nvim",
+  --    lazy = false,
+  --    priority = 1000,
+  --    config = function()
+  --      require('onenord').setup({
+  --        theme = "dark",  -- "dark" or "light". Alternatively, remove the option and set vim.o.background instead
+  --        borders = true,  -- Split window borders
+  --        fade_nc = false, -- Fade non-current windows, making them more distinguishable
+  --        -- Style that is applied to various groups: see `highlight-args` for options
+  --        styles = {
+  --          comments = "NONE",
+  --          strings = "NONE",
+  --          keywords = "NONE",
+  --          functions = "NONE",
+  --          variables = "NONE",
+  --          diagnostics = "underline",
+  --        },
+  --        disable = {
+  --          background = false,       -- Disable setting the background color
+  --          float_background = false, -- Disable setting the background color for floating windows
+  --          cursorline = false,       -- Disable the cursorline
+  --          eob_lines = true,         -- Hide the end-of-buffer lines
+  --        },
+  --        -- Inverse highlight for different groups
+  --        inverse = {
+  --          match_paren = false,
+  --        },
+  --        custom_highlights = {}, -- Overwrite default highlight groups
+  --        custom_colors = {},     -- Overwrite default colors
+  --      })
+  --      require('lualine').setup {
+  --        options = {
+  --          -- ... your lualine config
+  --          theme = 'onenord'
+  --          -- ... your lualine config
+  --        }
+  --      }
+  --    end,
+  --  },
   -- I have a separate config.mappings file where I require which-key.
   -- With lazy the plugin will be automatically loaded when it is required somewhere
   {
@@ -105,7 +154,26 @@ return {
   {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" }
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local harpoon = require("harpoon")
+
+      -- REQUIRED
+      harpoon:setup()
+      -- REQUIRED
+
+      vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+      vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+      vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
+      vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end)
+      vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end)
+      vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end)
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+      vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+    end
   },
   {
     "williamboman/mason.nvim",
@@ -250,13 +318,38 @@ return {
     'https://codeberg.org/esensar/nvim-dev-container',
     dependencies = 'nvim-treesitter/nvim-treesitter',
     config = function()
-      require("devcontainer").setup({
+      require("devcontainer").setup {
+        generate_commands = true,
+        -- By default no autocommands are generated
+        -- This option can be used to configure automatic starting and cleaning of containers
+        autocommands = {
+          -- can be set to true to automatically start containers when devcontainer.json is available
+          init = false,
+          -- can be set to true to automatically remove any started containers and any built images when exiting vim
+          clean = false,
+          -- can be set to true to automatically restart containers when devcontainer.json file is updated
+          update = false,
+        },
+        -- can be changed to increase or decrease logging from library
+        log_level = "info",
+        -- can be set to true to disable recursive search
+        -- in that case only .devcontainer.json and .devcontainer/devcontainer.json files will be checked relative
+        -- to the directory provided by config_search_start
+        disable_recursive_config_search = false,
+        -- can be set to false to disable image caching when adding neovim
+        -- by default it is set to true to make attaching to containers faster after first time
+        cache_images = true,
+        -- By default all mounts are added (config, data and state)
+        -- This can be changed to disable mounts or change their options
+        -- This can be useful to mount local configuration
+        -- And any other mounts when attaching to containers with this plugin
         attach_mounts = {
+          always = true,
           neovim_config = {
             -- enables mounting local config to /root/.config/nvim in container
             enabled = true,
             -- makes mount readonly in container
-            options = { "readonly" },
+            options = { "readonly" }
           },
           neovim_data = {
             -- enables mounting local data to /root/.local/share/nvim in container
@@ -272,7 +365,23 @@ return {
             options = {}
           },
         },
-      })
+        -- This takes a list of mounts (strings) that should always be added to every run container
+        -- This is passed directly as --mount option to docker command
+        -- Or multiple --mount options if there are multiple values
+        always_mount = {},
+        -- This takes a string (usually either "podman" or "docker") representing container runtime - "devcontainer-cli" is also partially supported
+        -- That is the command that will be invoked for container operations
+        -- If it is nil, plugin will use whatever is available (trying "podman" first)
+        container_runtime = nil,
+        -- Similar to container runtime, but will be used if main runtime does not support an action - useful for "devcontainer-cli"
+        backup_runtime = nil,
+        -- This takes a string (usually either "podman-compose" or "docker-compose") representing compose command - "devcontainer-cli" is also partially supported
+        -- That is the command that will be invoked for compose operations
+        -- If it is nil, plugin will use whatever is available (trying "podman-compose" first)
+        compose_command = nil,
+        -- Similar to compose command, but will be used if main command does not support an action - useful for "devcontainer-cli"
+        backup_compose_command = nil,
+      }
     end,
   },
 
@@ -578,6 +687,92 @@ return {
     version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
     -- install jsregexp (optional!).
     build = "make install_jsregexp"
+  },
+  {
+    "eandrju/cellular-automaton.nvim"
+  },
+  {
+    "hedyhli/outline.nvim",
+    config = function()
+      -- Example mapping to toggle outline
+      vim.keymap.set("n", "<leader>o", "<cmd>Outline<CR>",
+        { desc = "Toggle Outline" })
+
+      require("outline").setup {
+        -- Your setup opts here (leave empty to use defaults)
+      }
+    end,
+  },
+  {
+    'Wansmer/symbol-usage.nvim',
+    event = 'LspAttach', -- need run before LspAttach if you use nvim 0.9. On 0.10 use 'LspAttach'
+    config = function()
+      local function h(name) return vim.api.nvim_get_hl(0, { name = name }) end
+
+      -- hl-groups can have any name
+      vim.api.nvim_set_hl(0, 'SymbolUsageRounding', { fg = h('CursorLine').bg, italic = true })
+      vim.api.nvim_set_hl(0, 'SymbolUsageContent', { bg = h('CursorLine').bg, fg = h('Comment').fg, italic = true })
+      vim.api.nvim_set_hl(0, 'SymbolUsageRef', { fg = h('Function').fg, bg = h('CursorLine').bg, italic = true })
+      vim.api.nvim_set_hl(0, 'SymbolUsageDef', { fg = h('Type').fg, bg = h('CursorLine').bg, italic = true })
+      vim.api.nvim_set_hl(0, 'SymbolUsageImpl', { fg = h('@keyword').fg, bg = h('CursorLine').bg, italic = true })
+
+      local function text_format(symbol)
+        local res = {}
+
+        local round_start = { '', 'SymbolUsageRounding' }
+        local round_end = { '', 'SymbolUsageRounding' }
+
+        -- Indicator that shows if there are any other symbols in the same line
+        local stacked_functions_content = symbol.stacked_count > 0
+            and ("+%s"):format(symbol.stacked_count)
+            or ''
+
+        if symbol.references then
+          local usage = symbol.references <= 1 and 'usage' or 'usages'
+          local num = symbol.references == 0 and 'no' or symbol.references
+          table.insert(res, round_start)
+          table.insert(res, { '󰌹 ', 'SymbolUsageRef' })
+          table.insert(res, { ('%s %s'):format(num, usage), 'SymbolUsageContent' })
+          table.insert(res, round_end)
+        end
+
+        if symbol.definition then
+          if #res > 0 then
+            table.insert(res, { ' ', 'NonText' })
+          end
+          table.insert(res, round_start)
+          table.insert(res, { '󰳽 ', 'SymbolUsageDef' })
+          table.insert(res, { symbol.definition .. ' defs', 'SymbolUsageContent' })
+          table.insert(res, round_end)
+        end
+
+        if symbol.implementation then
+          if #res > 0 then
+            table.insert(res, { ' ', 'NonText' })
+          end
+          table.insert(res, round_start)
+          table.insert(res, { '󰡱 ', 'SymbolUsageImpl' })
+          table.insert(res, { symbol.implementation .. ' impls', 'SymbolUsageContent' })
+          table.insert(res, round_end)
+        end
+
+        if stacked_functions_content ~= '' then
+          if #res > 0 then
+            table.insert(res, { ' ', 'NonText' })
+          end
+          table.insert(res, round_start)
+          table.insert(res, { ' ', 'SymbolUsageImpl' })
+          table.insert(res, { stacked_functions_content, 'SymbolUsageContent' })
+          table.insert(res, round_end)
+        end
+
+        return res
+      end
+
+      require('symbol-usage').setup({
+        text_format = text_format,
+      })
+    end
   }
 }
 
