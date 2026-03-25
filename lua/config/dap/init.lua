@@ -94,7 +94,6 @@ end
 
 function M.setup()
   require("config.dap.keymaps").setup() -- Keymaps
-  require("dap.ext.vscode").load_launchjs(nil, { codelldb = { "c", "cpp", "rust" } })
   configure()          -- Configuration
   configure_exts()     -- Extensions
   configure_debuggers() -- Debugger
