@@ -90,6 +90,8 @@ end
 
 local function configure_debuggers()
   require("config.dap.cpp").setup()
+  require("config.dap.python").setup()
+  require("config.dap.cs").setup()
 end
 
 function M.setup()

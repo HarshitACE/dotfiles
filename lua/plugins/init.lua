@@ -78,7 +78,10 @@ return {
     "folke/which-key.nvim",
     lazy = true
   },
-
+  {
+    "edluffy/hologram.nvim",
+    lazy = true
+  },
   {
     "nvim-neorg/neorg",
     -- lazy-load on filetype
