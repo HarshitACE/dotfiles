@@ -1,104 +1,124 @@
 local M = {}
 
-local function configure()
-	local dap_breakpoint = {
-		breakpoint = {
-			text = " ",
-			texthl = "LspDiagnosticsSignError",
-			linehl = "",
-			numhl = "",
-		},
-		rejected = {
-			text = " ",
-			texthl = "LspDiagnosticsSignHint",
-			linehl = "",
-			numhl = "",
-		},
-		stopped = {
-			text = " ",
-			texthl = "LspDiagnosticsSignInformation",
-			linehl = "DiagnosticUnderlineInfo",
-			numhl = "LspDiagnosticsSignInformation",
-		},
-	}
-
-	vim.fn.sign_define("DapBreakpoint", dap_breakpoint.breakpoint)
-	vim.fn.sign_define("DapStopped", dap_breakpoint.stopped)
-	vim.fn.sign_define("DapBreakpointRejected", dap_breakpoint.rejected)
+-- python venv finding
+local venv_names = {"venv", ".venv"}
+local function find_python_in_dir(dir)
+  for _, name in ipairs(venv_names) do
+    local python = dir .. "/" .. name .. "/bin/python"
+    if vim.fn.executable(python) == 1 then
+      return python
+    end
+  end
 end
 
-
-
-local function configure_exts()
-	require("nvim-dap-virtual-text").setup({
-		commented = true,
-	})
-
-	local dap, dapui = require("dap"), require("dapui")
-	dapui.setup({
-		expand_lines = true,
-		icons = { expanded = "", collapsed = "", circular = "" },
-		mappings = {
-			-- Use a table to apply multiple mappings
-			expand = { "<CR>", "<2-LeftMouse>" },
-			open = "o",
-			remove = "d",
-			edit = "e",
-			repl = "r",
-			toggle = "t",
-		},
-		layouts = {
-			{
-				elements = {
-					{ id = "scopes", size = 0.33 },
-					{ id = "breakpoints", size = 0.17 },
-					{ id = "stacks", size = 0.25 },
-					{ id = "watches", size = 0.25 },
-				},
-				size = 0.33,
-				position = "right",
-			},
-			{
-				elements = {
-					{ id = "repl", size = 0.45 },
-					{ id = "console", size = 0.55 },
-				},
-				size = 0.27,
-				position = "bottom",
-			},
-		},
-		floating = {
-			max_height = 0.9,
-			max_width = 0.5, -- Floats will be treated as percentage of your screen.
-			border = vim.g.border_chars, -- Border style. Can be 'single', 'double' or 'rounded'
-			mappings = {
-				close = { "q", "<Esc>" },
-			},
-		},
-	}) -- use default
-	dap.listeners.after.event_initialized["dapui_config"] = function()
-		dapui.open({})
-	end
-	dap.listeners.before.event_terminated["dapui_config"] = function()
-		dapui.close({})
-	end
-	dap.listeners.before.event_exited["dapui_config"] = function()
-		dapui.close({})
-	end
+local function find_python_upwards(start_dir)
+  local dir = start_dir
+  while dir and dir ~= "" and dir ~= "/" do
+    local python = find_python_in_dir(dir)
+    if python then
+      return python
+    end
+    dir = vim.fn.fnamemodify(dir, ":h")
+  end
 end
 
-
-local function configure_debuggers()
-  require("config.dap.cpp").setup()
+local function resolve_python()
+  local virtual_env = os.getenv("VIRTUAL_ENV")
+  if virtual_env and virtual_env ~= "" then
+    local python = virtual_env .. "/bin/python"
+    if vim.fn.executable(python) == 1 then
+      return python
+    end
+  end
+  local from_file = find_python_upwards(vim.fn.expand("%:p:h"))
+  if from_file then
+    return from_file
+  end
+  local from_cwd = find_python_upwards(vim.fn.getcwd())
+  if from_cwd then
+    return from_cwd
+  end
+  return "/usr/bin/python"
 end
 
 function M.setup()
-  require("config.dap.keymaps").setup() -- Keymaps
-  configure()          -- Configuration
-  configure_exts()     -- Extensions
-  configure_debuggers() -- Debugger
-end
+  if M._setup then
+    return
+  end
+  M._setup = true
 
-configure_debuggers()
+  local mason_dap = require("mason-nvim-dap")
+  local dap = require("dap")
+  local ui = require("dapui")
+  local dap_virtual_text = require("nvim-dap-virtual-text")
+
+  dap_virtual_text.setup()
+
+  mason_dap.setup({
+    ensure_installed = { "cppdbg", "python" },
+    automatic_installation = true,
+    handlers = {
+      function(config)
+        require("mason-nvim-dap").default_setup(config)
+      end,
+    },
+  })
+
+  dap.configurations = {
+    c = {
+      {
+        name = "Launch file",
+        type = "cppdbg",
+        request = "launch",
+        program = function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+        end,
+        cwd = "${workspaceFolder}",
+        stopAtEntry = false,
+        MIMode = "lldb",
+      },
+      {
+        name = "Attach to lldbserver :1234",
+        type = "cppdbg",
+        request = "launch",
+        MIMode = "lldb",
+        miDebuggerServerAddress = "localhost:1234",
+        miDebuggerPath = "/usr/bin/lldb",
+        cwd = "${workspaceFolder}",
+        program = function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+        end,
+      },
+    },
+    python = {
+      {
+        type = "python",
+        request = "launch",
+        name = "Launch file",
+        program = "${file}",
+        pythonPath = resolve_python,
+      },
+    },
+  }
+
+  ui.setup()
+
+  vim.fn.sign_define("DapBreakpoint", { text = "🐞" })
+
+  dap.listeners.before.attach.dapui_config = function()
+    ui.open()
+  end
+  dap.listeners.before.launch.dapui_config = function()
+    ui.open()
+  end
+  dap.listeners.before.event_terminated.dapui_config = function()
+    ui.close()
+  end
+  dap.listeners.before.event_exited.dapui_config = function()
+    ui.close()
+  end
+
+  require("config.dap.keymaps").setup()
+end
 
 return M

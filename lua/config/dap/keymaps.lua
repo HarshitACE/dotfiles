@@ -1,66 +1,39 @@
 local M = {}
 
-local whichkey = require "which-key"
--- local legendary = require "legendary"
-
--- local function keymap(lhs, rhs, desc)
---   vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
--- end
+local function map(mode, lhs, rhs, desc)
+  vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc })
+end
 
 function M.setup()
-  local keymap = {
-    d = {
-      name = "DAP",
-      R = { "<cmd>lua require'dap'.run_to_cursor()<cr>", "Run to Cursor" },
-      E = { "<cmd>lua require'dapui'.eval(vim.fn.input '[Expression] > ')<cr>", "Evaluate Input" },
-      C = { "<cmd>lua require'dap'.set_breakpoint(vim.fn.input '[Condition] > ')<cr>", "Conditional Breakpoint" },
-      U = { "<cmd>lua require'dapui'.toggle()<cr>", "Toggle UI" },
-      b = { "<cmd>lua require'dap'.step_back()<cr>", "Step Back" },
-      c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
-      d = { "<cmd>lua require'dap'.disconnect()<cr>", "Disconnect" },
-      e = { "<cmd>lua require'dapui'.eval()<cr>", "Evaluate" },
-      g = { "<cmd>lua require'dap'.session()<cr>", "Get Session" },
-      h = { "<cmd>lua require'dap.ui.widgets'.hover()<cr>", "Hover Variables" },
-      S = { "<cmd>lua require'dap.ui.widgets'.scopes()<cr>", "Scopes" },
-      i = { "<cmd>lua require'dap'.step_into()<cr>", "Step Into" },
-      o = { "<cmd>lua require'dap'.step_over()<cr>", "Step Over" },
-      p = { "<cmd>lua require'dap'.pause.toggle()<cr>", "Pause" },
-      q = { "<cmd>lua require'dap'.close()<cr>", "Quit" },
-      r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Toggle Repl" },
-      s = { "<cmd>lua require'dap'.continue()<cr>", "Start" },
-      t = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Toggle Breakpoint" },
-      x = { "<cmd>lua require'dap'.terminate()<cr>", "Terminate" },
-      u = { "<cmd>lua require'dap'.step_out()<cr>", "Step Out" },
-    },
-  }
-  local opts = {
-    mode = "n",
-    prefix = "<leader>",
-    buffer = nil,
-    silent = true,
-    noremap = true,
-    nowait = false,
-  }
-  whichkey.register(keymap, opts)
-  --- require("legendary.integrations.which-key").bind_whichkey(keymap, opts, false)
+  local dap = require("dap")
+  local dapui = require("dapui")
+  local widgets = require("dap.ui.widgets")
 
-  local keymap_v = {
-    d = {
-      name = "Debug",
-      e = { "<cmd>lua require'dapui'.eval()<cr>", "Evaluate" },
-    },
-  }
-  opts = {
-    mode = "v",
-    prefix = "<leader>",
-    buffer = nil,
-    silent = true,
-    noremap = true,
-    nowait = false,
-  }
-  whichkey.register(keymap_v, opts)
-  --- require("legendary.integrations.which-key").bind_whichkey(keymap_v, opts, false)
+  map("n", "<leader>dR", function() dap.run_to_cursor() end, "Run to cursor")
+  map("n", "<leader>dE", function()
+    dapui.eval(vim.fn.input("[Expression] > "))
+  end, "Evaluate input")
+  map("n", "<leader>dC", function()
+    dap.set_breakpoint(vim.fn.input("[Condition] > "))
+  end, "Conditional breakpoint")
+  map("n", "<leader>dU", function() dapui.toggle() end, "Toggle DAP UI")
+  map("n", "<leader>db", function() dap.step_back() end, "Step back")
+  map("n", "<leader>dc", function() dap.continue() end, "Continue")
+  map("n", "<leader>dd", function() dap.disconnect() end, "Disconnect")
+  map("n", "<leader>de", function() dapui.eval() end, "Evaluate")
+  map("v", "<leader>de", function() dapui.eval() end, "Evaluate")
+  map("n", "<leader>dg", function() dap.session() end, "Get session")
+  map("n", "<leader>dh", function() widgets.hover() end, "Hover variables")
+  map("n", "<leader>dS", function() widgets.scopes() end, "Scopes")
+  map("n", "<leader>di", function() dap.step_into() end, "Step into")
+  map("n", "<leader>do", function() dap.step_over() end, "Step over")
+  map("n", "<leader>dp", function() dap.pause.toggle() end, "Pause")
+  map("n", "<leader>dq", function() dap.close() end, "Quit debug")
+  map("n", "<leader>dr", function() dap.repl.toggle() end, "Toggle REPL")
+  map("n", "<leader>ds", function() dap.continue() end, "Start / continue")
+  map("n", "<leader>dt", function() dap.toggle_breakpoint() end, "Toggle breakpoint")
+  map("n", "<leader>dx", function() dap.terminate() end, "Terminate")
+  map("n", "<leader>du", function() dap.step_out() end, "Step out")
 end
 
 return M
-

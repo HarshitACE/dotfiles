@@ -1,101 +1,66 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+
+-- Explorer
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
+
+-- File
 vim.keymap.set("n", "<leader>fs", vim.cmd.w)
+vim.keymap.set("n", "<leader>ff", vim.lsp.buf.format)
+
+-- Quit
 vim.keymap.set("n", "<leader>q", vim.cmd.q)
 
-vim.keymap.set("n", "<leader>t", vim.cmd.tabnew)
-vim.keymap.set("n", "<leader>tn", vim.cmd.tabNext)
+-- Modes
+vim.keymap.set("i", "jk", "<Esc>")
+
+-- Tabs
+vim.keymap.set("n", "<leader>tt", vim.cmd.tabnew)
+vim.keymap.set("n", "<leader>tn", vim.cmd.tabnext)
 vim.keymap.set("n", "<leader>tp", vim.cmd.tabprevious)
 vim.keymap.set("n", "<leader>tc", vim.cmd.tabclose)
 
+-- Windows
 vim.keymap.set("n", "<leader>ws", vim.cmd.split)
 vim.keymap.set("n", "<leader>wv", vim.cmd.vsplit)
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-
-vim.keymap.set("n", "<leader>vwm", function()
+-- Vim With Me
+vim.keymap.set("n", "<leader>vs", function()
     require("vim-with-me").StartVimWithMe()
 end)
-vim.keymap.set("n", "<leader>svwm", function()
+
+vim.keymap.set("n", "<leader>vS", function()
     require("vim-with-me").StopVimWithMe()
 end)
 
--- greatest remap ever
-vim.keymap.set("x", "<leader>p", [["_dP]])
+-- Clipboard
+vim.keymap.set("x", "<leader>cp", [["_dP]])
+vim.keymap.set({ "n", "v" }, "<leader>cy", [["+y]])
+vim.keymap.set("n", "<leader>cY", [["+Y]])
 
--- next greatest remap ever : asbjornHaland
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
+-- Delete without yanking
+vim.keymap.set({ "n", "v" }, "<leader>x", [["_d]])
 
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
-
--- This is going to get me cancelled
-vim.keymap.set("i", "jk", "<Esc>")
-
-vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-
+-- Quickfix
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
+
+-- Location list
 vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+-- Search
+vim.keymap.set("n", "<leader>ss", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
-vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>");
-vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton make_it_rain<CR>");
+-- Utilities
+vim.keymap.set("n", "<leader>xx", "<cmd>!chmod +x %<CR>", { silent = true })
+vim.keymap.set("n", "<leader>xr", "<cmd>CellularAutomaton make_it_rain<CR>")
 
-vim.keymap.set("n", "<leader><leader>", function()
-    vim.cmd("so")
-end)
+-- Source config
+vim.keymap.set("n", "<leader><leader>", "<cmd>source<CR>")
 
--- Error Navigation --
-vim.keymap.set("n", "]g", vim.diagnostic.goto_next)
-vim.keymap.set("n", "[g", vim.diagnostic.goto_prev)
-
-vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
-vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
-vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
-vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
-vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
-vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
-vim.keymap.set('n', '<Leader>lp',
-    function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
-vim.keymap.set('n', '<Leader>dr', function() require('dap').repl.open() end)
-vim.keymap.set('n', '<Leader>dl', function() require('dap').run_last() end)
-vim.keymap.set({ 'n', 'v' }, '<Leader>dh', function()
-    require('dap.ui.widgets').hover()
-end)
-vim.keymap.set({ 'n', 'v' }, '<Leader>dp', function()
-    require('dap.ui.widgets').preview()
-end)
-vim.keymap.set('n', '<Leader>df', function()
-    local widgets = require('dap.ui.widgets')
-    widgets.centered_float(widgets.frames)
-end)
-vim.keymap.set('n', '<Leader>ds', function()
-    local widgets = require('dap.ui.widgets')
-    widgets.centered_float(widgets.scopes)
-end)
-
-vim.keymap.set("x", "<leader>re", ":Refactor extract ")
-vim.keymap.set("x", "<leader>rf", ":Refactor extract_to_file ")
-
-vim.keymap.set("x", "<leader>rv", ":Refactor extract_var ")
-
-vim.keymap.set({ "n", "x" }, "<leader>ri", ":Refactor inline_var")
-
-vim.keymap.set( "n", "<leader>rI", ":Refactor inline_func")
-
-vim.keymap.set("n", "<leader>rb", ":Refactor extract_block")
-vim.keymap.set("n", "<leader>rbf", ":Refactor extract_block_to_file")
-
+-- Dotfiles
+vim.keymap.set(
+    "n",
+    "<leader>fn",
+    "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>"
+)
