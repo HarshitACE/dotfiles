@@ -69,6 +69,8 @@ wk.add({
   { "<leader>vs", desc = "Start Vim With Me" },
   { "<leader>vS", desc = "Stop Vim With Me" },
   { "<leader>vd", desc = "Diagnostic float" },
+  { "<leader>vf", desc = "Format buffer", mode = "n" },
+  { "<leader>vf", desc = "Format selection", mode = "v" },
   { "<leader>vws", desc = "Workspace symbol" },
   { "<leader>vca", desc = "Code action" },
   { "<leader>vrr", desc = "References" },

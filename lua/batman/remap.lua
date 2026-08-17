@@ -5,7 +5,11 @@ vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
 
 -- File
 vim.keymap.set("n", "<leader>fs", vim.cmd.w)
-vim.keymap.set("n", "<leader>ff", vim.lsp.buf.format)
+
+-- LSP format: whole buffer (normal) or selection (visual)
+vim.keymap.set({ "n", "v" }, "<leader>vf", function()
+  vim.lsp.buf.format({ async = true })
+end, { desc = "Format buffer or selection" })
 
 -- Quit
 vim.keymap.set("n", "<leader>q", vim.cmd.q)

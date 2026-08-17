@@ -23,55 +23,6 @@ return {
       vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
-  -- {
-  --   "gbprod/nord.nvim",
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     require("nord").setup({})
-  --     vim.cmd.colorscheme("nord")
-  --   end,
-  -- },
-  --  {
-  --    "rmehri01/onenord.nvim",
-  --    lazy = false,
-  --    priority = 1000,
-  --    config = function()
-  --      require('onenord').setup({
-  --        theme = "dark",  -- "dark" or "light". Alternatively, remove the option and set vim.o.background instead
-  --        borders = true,  -- Split window borders
-  --        fade_nc = false, -- Fade non-current windows, making them more distinguishable
-  --        -- Style that is applied to various groups: see `highlight-args` for options
-  --        styles = {
-  --          comments = "NONE",
-  --          strings = "NONE",
-  --          keywords = "NONE",
-  --          functions = "NONE",
-  --          variables = "NONE",
-  --          diagnostics = "underline",
-  --        },
-  --        disable = {
-  --          background = false,       -- Disable setting the background color
-  --          float_background = false, -- Disable setting the background color for floating windows
-  --          cursorline = false,       -- Disable the cursorline
-  --          eob_lines = true,         -- Hide the end-of-buffer lines
-  --        },
-  --        -- Inverse highlight for different groups
-  --        inverse = {
-  --          match_paren = false,
-  --        },
-  --        custom_highlights = {}, -- Overwrite default highlight groups
-  --        custom_colors = {},     -- Overwrite default colors
-  --      })
-  --      require('lualine').setup {
-  --        options = {
-  --          -- ... your lualine config
-  --          theme = 'onenord'
-  --          -- ... your lualine config
-  --        }
-  --      }
-  --    end,
-  --  },
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -85,19 +36,6 @@ return {
       },
     },
   },
-
-  {
-    "nvim-neorg/neorg",
-    -- lazy-load on filetype
-    ft = "norg",
-    -- options for neorg. This will automatically call `require("neorg").setup(opts)`
-    opts = {
-      load = {
-        ["core.defaults"] = {},
-      },
-    },
-  },
-
   {
     "dstein64/vim-startuptime",
     -- lazy-load on a command
