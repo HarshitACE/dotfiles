@@ -24,6 +24,19 @@ return {
     end,
   },
   {
+    "erl-koenig/theme-hub.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      -- Optional: for themes that use lush (will be notified if a theme requires it)
+      -- "rktjmp/lush.nvim"
+    },
+    config = function()
+      require("theme-hub").setup({
+        -- Configuration options (see below)
+      })
+    end,
+  },
+  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     keys = {
@@ -146,7 +159,28 @@ return {
   {
     "neovim/nvim-lspconfig",
   },
+  {
+    "NeogitOrg/neogit",
+    lazy = true,
+    dependencies = {
+      -- Only one of these is needed.
+      "sindrets/diffview.nvim",   -- optional
+      "esmuellert/codediff.nvim", -- optional
 
+      -- For a custom log pager
+      "m00qek/baleia.nvim", -- optional
+
+      -- Only one of these is needed.
+      "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua",              -- optional
+      "nvim-mini/mini.pick",           -- optional
+      "folke/snacks.nvim",             -- optional
+    },
+    cmd = "Neogit",
+    keys = {
+      { "<leader>gg", "<cmd>Neogit<cr>", desc = "Show Neogit UI" }
+    }
+  },
   {
     "hrsh7th/nvim-cmp",
     -- load cmp on InsertEnter
@@ -576,7 +610,7 @@ return {
     'chomosuke/typst-preview.nvim',
     lazy = false, -- or ft = 'typst'
     version = '1.*',
-    opts = {}, -- lazy.nvim will implicitly calls `setup {}`
+    opts = {},    -- lazy.nvim will implicitly calls `setup {}`
   },
   {
     "ThePrimeagen/refactoring.nvim",
@@ -654,6 +688,26 @@ return {
     end,
   },
   { 'akinsho/git-conflict.nvim',  version = "*",                            config = true },
+  {
+    'madskjeldgaard/cppman.nvim',
+    requires = {
+      { 'MunifTanjim/nui.nvim' }
+    },
+    config = function()
+      local cppman = require "cppman"
+      cppman.setup()
+
+      -- Make a keymap to open the word under cursor in CPPman
+      vim.keymap.set("n", "<leader>cm", function()
+        cppman.open_cppman_for(vim.fn.expand("<cword>"))
+      end)
+
+      -- Open search box
+      vim.keymap.set("n", "<leader>cc", function()
+        cppman.input()
+      end)
+    end
+  },
   {
     'Wansmer/symbol-usage.nvim',
     event = 'LspAttach', -- need run before LspAttach if you use nvim 0.9. On 0.10 use 'LspAttach'
