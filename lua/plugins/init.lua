@@ -106,9 +106,7 @@ return {
     event = "InsertEnter",
     config = true
   },
-  { "VonHeikemen/lsp-zero.nvim" },
   { "mbbill/undotree" },
-  { "onsails/lspkind.nvim" },
   {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
@@ -133,9 +131,17 @@ return {
       vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
     end
   },
+  -- LSP. Setup lives in `plugin/lsp.lua`, which needs mason set up before
+  -- mason-lspconfig, so these specs only declare the dependencies.
+  { "neovim/nvim-lspconfig" },
+  { "mason-org/mason.nvim" },
   {
-    "mason-org/mason.nvim",
-    opts = {}
+    "mason-org/mason-lspconfig.nvim",
+    dependencies = {
+      "mason-org/mason.nvim",
+      "neovim/nvim-lspconfig",
+      "hrsh7th/cmp-nvim-lsp",
+    },
   },
   {
     "mfussenegger/nvim-dap",
@@ -149,15 +155,6 @@ return {
     config = function()
       require("config.dap").setup()
     end,
-  },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    config = function()
-      require("mason-lspconfig").setup()
-    end
-  },
-  {
-    "neovim/nvim-lspconfig",
   },
   {
     "NeogitOrg/neogit",
@@ -183,112 +180,118 @@ return {
   },
   {
     "hrsh7th/nvim-cmp",
-    -- load cmp on InsertEnter
-    event = "InsertEnter",
+    -- CmdlineEnter is needed as well, otherwise `:` and `/` completion stays
+    -- inert until insert mode has been entered once.
+    event = { "InsertEnter", "CmdlineEnter" },
     -- these dependencies will only be loaded when cmp loads
     -- dependencies are always lazy-loaded unless specified otherwise
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "saadparwaiz1/cmp_luasnip",
+      "L3MON4D3/LuaSnip",
+      "onsails/lspkind.nvim",
     },
-    opts = function()
-      local cmp_status, cmp = pcall(require, "cmp")
-      local lspkind = require('lspkind')
-      if not cmp_status then
-        print(cmp_status)
-        return
-      end
+    config = function()
+      local cmp = require("cmp")
+      local luasnip = require("luasnip")
+      local lspkind = require("lspkind")
 
-      return {
-        cmp.setup({
-          mapping = cmp.mapping.preset.insert({
-            ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
-            ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
-            ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-            ["<C-f>"] = cmp.mapping.scroll_docs(4),
-            ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
-            ["<C-e>"] = cmp.mapping.abort(),        -- close completion window
-            ["<CR>"] = cmp.mapping.confirm({ select = false }),
-          }),
-          -- sources for autocompletion
-          sources = cmp.config.sources({
-            { name = "nvim_lsp" }, -- LSP
-            { name = "buffer" },   -- text within the current buffer
-            { name = "path" },     -- file system paths
-          }),
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
+          ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
+          ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+          ["<C-f>"] = cmp.mapping.scroll_docs(4),
+          ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
+          ["<C-e>"] = cmp.mapping.abort(),        -- close completion window
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
+          ["<C-l>"] = cmp.mapping(function(fallback) -- next snippet placeholder
+            if luasnip.expand_or_locally_jumpable() then
+              luasnip.expand_or_jump()
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
+          ["<C-h>"] = cmp.mapping(function(fallback) -- previous snippet placeholder
+            if luasnip.locally_jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "s" }),
         }),
-
-        -- Set configuration for specific filetype.
-        cmp.setup.filetype('gitcommit', {
-          sources = cmp.config.sources({
-            { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
-          }, {
-            { name = 'buffer' },
+        -- sources for autocompletion; the second group is only consulted when
+        -- the first one returns nothing
+        sources = cmp.config.sources({
+          { name = "nvim_lsp" }, -- LSP
+          { name = "luasnip" },  -- snippets
+        }, {
+          { name = "buffer" },   -- text within the current buffer
+          { name = "path" },     -- file system paths
+        }),
+        formatting = {
+          format = lspkind.cmp_format({
+            mode = 'symbol_text',  -- show only symbol annotations
+            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            preset = 'default',
+            symbol_map = {
+              Text = "󰉿",
+              Method = "󰆧",
+              Function = "󰊕",
+              Constructor = "",
+              Field = "󰜢",
+              Variable = "󰀫",
+              Class = "󰠱",
+              Interface = "",
+              Module = "",
+              Property = "󰜢",
+              Unit = "󰑭",
+              Value = "󰎠",
+              Enum = "",
+              Keyword = "󰌋",
+              Snippet = "",
+              Color = "󰏘",
+              File = "󰈙",
+              Reference = "󰈇",
+              Folder = "󰉋",
+              EnumMember = "",
+              Constant = "󰏿",
+              Struct = "󰙅",
+              Event = "",
+              Operator = "󰆕",
+              TypeParameter = "",
+            },
           })
-        }),
+        },
+      })
 
-        -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-        cmp.setup.cmdline({ '/', '?' }, {
-          mapping = cmp.mapping.preset.cmdline(),
-          sources = {
-            { name = "nvim_lsp" },
-            { name = 'buffer' },
-            { name = 'path' },
-          }
-        }),
-
-        -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-        cmp.setup.cmdline(':', {
-          mapping = cmp.mapping.preset.cmdline(),
-          sources = cmp.config.sources({
-            { name = 'path' }
-          }, {
-            { name = 'cmdline' }
-          }),
-          matching = { disallow_symbol_nonprefix_matching = false }
-        }),
-
-        cmp.setup {
-          formatting = {
-            format = lspkind.cmp_format({
-              mode = 'symbol_text',  -- show only symbol annotations
-              maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-              ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-              preset = 'default',
-              symbol_map = {
-                Text = "󰉿",
-                Method = "󰆧",
-                Function = "󰊕",
-                Constructor = "",
-                Field = "󰜢",
-                Variable = "󰀫",
-                Class = "󰠱",
-                Interface = "",
-                Module = "",
-                Property = "󰜢",
-                Unit = "󰑭",
-                Value = "󰎠",
-                Enum = "",
-                Keyword = "󰌋",
-                Snippet = "",
-                Color = "󰏘",
-                File = "󰈙",
-                Reference = "󰈇",
-                Folder = "󰉋",
-                EnumMember = "",
-                Constant = "󰏿",
-                Struct = "󰙅",
-                Event = "",
-                Operator = "󰆕",
-                TypeParameter = "",
-              },
-
-              -- The function below will be called before any actual modifications from lspkind
-              -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-            })
-          }
+      -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+      cmp.setup.cmdline({ '/', '?' }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = 'buffer' },
         }
-      }
+      })
+
+      -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        }),
+        matching = { disallow_symbol_nonprefix_matching = false }
+      })
     end,
   },
   -- Dev Containers
@@ -617,6 +620,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
+      "lewis6991/async.nvim",
     },
     config = function()
       require("refactoring").setup({
@@ -688,6 +692,57 @@ return {
     end,
   },
   { 'akinsho/git-conflict.nvim',  version = "*",                            config = true },
+  {
+    "yunusey/codeforces-nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = {
+      "EnterContest",
+      "QNext",
+      "TestCurrent",
+      "RunCurrent",
+      "CreateTestCase",
+      "RetrieveLastTestCase",
+    },
+    keys = {
+      { "<leader>cfe", ":EnterContest ", desc = "Codeforces: enter contest" },
+      { "<leader>cft", "<cmd>TestCurrent<cr>", desc = "Codeforces: test current problem" },
+      { "<leader>cfr", "<cmd>RunCurrent<cr>", desc = "Codeforces: run current problem" },
+      { "<leader>cfn", "<cmd>QNext<cr>", desc = "Codeforces: next problem" },
+    },
+    config = function()
+      local cf = require("codeforces-nvim")
+      cf.setup({
+        cf_path = vim.fn.expand("~/codeforces"),
+        extractor_path = vim.fn.expand("~/.cargo/bin/codeforces-extractor"),
+        -- WSL/Xvfb is flaky; a short Chromium flash is more reliable.
+        use_native_display = true,
+        -- No toggleterm.nvim in this config.
+        use_term_toggle = false,
+        timeout = 15000,
+        extension = "cpp",
+        lines = { cpp = 7, py = 3 },
+        compiler = {
+          cpp = { "g++", "-std=c++17", "-O2", "-pipe", "@.cpp", "-o", "@" },
+          py = {},
+        },
+        run = {
+          cpp = { "@" },
+          py = { "python3", "@.py" },
+        },
+      })
+
+      -- Upstream `:EnterContest` still calls fetch_problems(contest, dir, callback)
+      -- while fetch_problems expects (contest, dir, use_native_display, callback).
+      local codeforces = require("codeforces-nvim.codeforces")
+      local fetch_problems = codeforces.fetch_problems
+      codeforces.fetch_problems = function(contest, save_dir, a, b)
+        if type(a) == "function" then
+          return fetch_problems(contest, save_dir, codeforces.options.use_native_display, a)
+        end
+        return fetch_problems(contest, save_dir, a, b)
+      end
+    end,
+  },
   {
     'madskjeldgaard/cppman.nvim',
     requires = {

@@ -106,11 +106,14 @@ wk.add({
   { "gi", desc = "Go to implementation" },
   { "gu", desc = "Incoming calls" },
   { "gr", desc = "References" },
-  { "rn", desc = "Rename" },
   { "K", desc = "Hover documentation" },
-  { "[d", desc = "Next diagnostic" },
-  { "]d", desc = "Previous diagnostic" },
+  { "]d", desc = "Next diagnostic" },
+  { "[d", desc = "Previous diagnostic" },
   { "<C-s>", desc = "Signature help", mode = "i" },
+
+  -- Completion / snippets
+  { "<C-l>", desc = "Next snippet placeholder", mode = { "i", "s" } },
+  { "<C-h>", desc = "Previous snippet placeholder", mode = { "i", "s" } },
 
   -- Other plugins
   { "J", desc = "Toggle treesj" },
