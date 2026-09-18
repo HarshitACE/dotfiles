@@ -65,7 +65,7 @@ plugin/              -- LSP, Telescope, which-key, lualine
 | `<leader>cp` | Paste over selection without yanking (visual) |
 | `<leader>x` | Delete without yanking |
 | `<leader>ss` | Substitute word under cursor (prefilled) |
-| `<leader>xx` | `chmod +x` current file |
+| `<leader>ux` | `chmod +x` current file |
 | `J` | Toggle split/join (treesj) |
 | `<C-a>` / `<C-x>` | Increment / decrement (dial) |
 | `<leader>o` | Symbol outline |
@@ -138,7 +138,6 @@ Adapters Mason keeps installed: **cppdbg, codelldb, python (debugpy), coreclr, d
 | --- | --- |
 | `<C-j>` / `<C-k>` | Previous / next quickfix (centered) |
 | `<leader>j` / `<leader>k` | Previous / next location list |
-| `<leader>vs` / `<leader>vS` | Start / stop Vim With Me |
 
 Neo-tree git pane and **git-conflict** are available when there are conflicts. Fugitive is installed; there is no `<leader>gs` map in the live config (only in `after/backups/`).
 
@@ -162,7 +161,7 @@ Codeforces files live under `~/codeforces`. C++ compile flags: `g++ -std=c++17 -
 
 | Keys / command | Action |
 | --- | --- |
-| `<leader>xr` | Cellular automaton rain |
+| `<leader>ur` | Cellular automaton rain |
 | `<leader>fn` | Open a hardcoded old packer path (stale; not this repo) |
 | `:MarkdownPreview` | Markdown preview (markdown buffers) |
 | `:TypstPreview` | Typst preview |
@@ -176,7 +175,9 @@ Undotree is installed but **not mapped** in the live config.
 
 ## Options (short)
 
-Relative numbers, 2-space tabs, no wrap, `colorcolumn` 120, persistent undo in `~/.vim/undodir`, no swap/backup, `scrolloff` 8, `updatetime` 50, always-on signcolumn, blinking bar cursor in insert.
+Relative numbers, 2-space tabs, no wrap, `colorcolumn` 120, persistent undo in `~/.vim/undodir`, no swap/backup, `scrolloff` 8, `updatetime` 50, `timeoutlen` 300, always-on signcolumn, blinking bar cursor in insert.
+
+`timeoutlen` is 300ms so which-key chords resolve quickly. No `<leader>` mapping is a prefix of another, so chords fire as soon as you finish typing; the only prefix pair left is Neovim's built-in `gc` / `gcc`.
 
 ---
 

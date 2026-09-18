@@ -27,15 +27,6 @@ vim.keymap.set("n", "<leader>tc", vim.cmd.tabclose)
 vim.keymap.set("n", "<leader>ws", vim.cmd.split)
 vim.keymap.set("n", "<leader>wv", vim.cmd.vsplit)
 
--- Vim With Me
-vim.keymap.set("n", "<leader>vs", function()
-    require("vim-with-me").StartVimWithMe()
-end)
-
-vim.keymap.set("n", "<leader>vS", function()
-    require("vim-with-me").StopVimWithMe()
-end)
-
 -- Clipboard
 vim.keymap.set("x", "<leader>cp", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>cy", [["+y]])
@@ -55,9 +46,10 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 -- Search
 vim.keymap.set("n", "<leader>ss", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
--- Utilities
-vim.keymap.set("n", "<leader>xx", "<cmd>!chmod +x %<CR>", { silent = true })
-vim.keymap.set("n", "<leader>xr", "<cmd>CellularAutomaton make_it_rain<CR>")
+-- Utilities. These live under <leader>u so that <leader>x stays a complete
+-- mapping rather than a prefix, which would stall it for 'timeoutlen'.
+vim.keymap.set("n", "<leader>ux", "<cmd>!chmod +x %<CR>", { silent = true })
+vim.keymap.set("n", "<leader>ur", "<cmd>CellularAutomaton make_it_rain<CR>")
 
 -- Source config
 vim.keymap.set("n", "<leader><leader>", "<cmd>source<CR>")

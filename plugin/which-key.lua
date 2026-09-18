@@ -64,10 +64,8 @@ wk.add({
   { "<leader>tp", desc = "Previous tab" },
   { "<leader>tc", desc = "Close tab" },
 
-  -- LSP / Vim With Me
-  { "<leader>v", group = "LSP / Vim With Me" },
-  { "<leader>vs", desc = "Start Vim With Me" },
-  { "<leader>vS", desc = "Stop Vim With Me" },
+  -- LSP
+  { "<leader>v", group = "LSP" },
   { "<leader>vd", desc = "Diagnostic float" },
   { "<leader>vf", desc = "Format buffer", mode = "n" },
   { "<leader>vf", desc = "Format selection", mode = "v" },
@@ -81,10 +79,13 @@ wk.add({
   { "<leader>ws", desc = "Horizontal split" },
   { "<leader>wv", desc = "Vertical split" },
 
-  -- Delete / utilities
+  -- Delete
   { "<leader>x", desc = "Delete without yanking", mode = { "n", "v" } },
-  { "<leader>xx", desc = "Make file executable" },
-  { "<leader>xr", desc = "Make it rain" },
+
+  -- Utilities
+  { "<leader>u", group = "Utilities" },
+  { "<leader>ux", desc = "Make file executable" },
+  { "<leader>ur", desc = "Make it rain" },
 
   -- Source config
   { "<leader><leader>", desc = "Source config" },
