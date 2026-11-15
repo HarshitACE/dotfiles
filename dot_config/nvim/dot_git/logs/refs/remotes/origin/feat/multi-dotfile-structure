@@ -1,0 +1,8 @@
+0000000000000000000000000000000000000000 7f2c3dba1743f2abcd6587312b7123124066df15 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1774530911 +0000	pull: storing head
+7f2c3dba1743f2abcd6587312b7123124066df15 9dd4e0f6f9173205f4503cafacc886123135a091 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839161 +0100	fetch --all --no-write-fetch-head: fast-forward
+9dd4e0f6f9173205f4503cafacc886123135a091 72c55ce487bdf65ea045f2ed5c7740004ea956e6 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839513 +0100	update by push
+72c55ce487bdf65ea045f2ed5c7740004ea956e6 039df4afe6b1dc5205cb46e9bafb4b4dca1d98d5 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785840085 +0100	update by push
+039df4afe6b1dc5205cb46e9bafb4b4dca1d98d5 1d16873fa90f8ce5f0d806c196b9fa2b0f76babe Harshit Gautam <batman@unknown.home> 1787606924 +0100	pull: fast-forward
+1d16873fa90f8ce5f0d806c196b9fa2b0f76babe a18f53ab9b0f155f4e743727a55b1517f7b67312 Harshit Gautam <batman@harshits-mbp.home> 1790107322 +0100	fetch --all --no-write-fetch-head: fast-forward
+a18f53ab9b0f155f4e743727a55b1517f7b67312 bd14111013d1e41ef37da8a49b6a17c654f9954d Harshit Gautam <batman@harshits-mbp.home> 1790107702 +0100	update by push
+bd14111013d1e41ef37da8a49b6a17c654f9954d 4521d993001f97496d338bad59b87943743fc091 Harshit Gautam <batman@harshits-mbp.home> 1794660262 +0000	fetch --all --no-write-fetch-head: forced-update

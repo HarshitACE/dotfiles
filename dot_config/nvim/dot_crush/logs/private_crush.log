@@ -1,0 +1,13 @@
+{"time":"2026-09-22T21:09:07.987265+01:00","level":"INFO","source":{"function":"github.com/charmbracelet/crush/internal/config.(*catwalkSync).Get.func1","file":"github.com/charmbracelet/crush/internal/config/catwalk.go","line":55},"msg":"Fetching providers from Catwalk"}
+{"time":"2026-09-22T21:09:09.272037+01:00","level":"INFO","source":{"function":"github.com/charmbracelet/crush/internal/config.cache[...].Store","file":"github.com/charmbracelet/crush/internal/config/provider.go","line":217},"msg":"Saving provider data to disk","path":"/Users/batman/.local/share/crush/providers.json"}
+{"time":"2026-09-22T21:09:09.27903+01:00","level":"WARN","source":{"function":"github.com/charmbracelet/crush/internal/config.Load","file":"github.com/charmbracelet/crush/internal/config/load.go","line":104},"msg":"No providers configured"}
+{"time":"2026-09-22T21:09:09.284953+01:00","level":"INFO","msg":"OK   20250424200609_initial.sql (1.04ms)"}
+{"time":"2026-09-22T21:09:09.285253+01:00","level":"INFO","msg":"OK   20250515105448_add_summary_message_id.sql (274.63µs)"}
+{"time":"2026-09-22T21:09:09.285521+01:00","level":"INFO","msg":"OK   20250624000000_add_created_at_indexes.sql (246.88µs)"}
+{"time":"2026-09-22T21:09:09.285757+01:00","level":"INFO","msg":"OK   20250627000000_add_provider_to_messages.sql (222.13µs)"}
+{"time":"2026-09-22T21:09:09.286449+01:00","level":"INFO","msg":"OK   20250810000000_add_is_summary_message.sql (444.92µs)"}
+{"time":"2026-09-22T21:09:09.287026+01:00","level":"INFO","msg":"OK   20250812000000_add_todos_to_sessions.sql (498.33µs)"}
+{"time":"2026-09-22T21:09:09.287441+01:00","level":"INFO","msg":"OK   20260127000000_add_read_files_table.sql (369.42µs)"}
+{"time":"2026-09-22T21:09:09.287452+01:00","level":"INFO","msg":"goose: successfully migrated database to version: 20260127000000"}
+{"time":"2026-09-22T21:09:09.289138+01:00","level":"WARN","source":{"function":"github.com/charmbracelet/crush/internal/app.New","file":"github.com/charmbracelet/crush/internal/app/app.go","line":124},"msg":"No agent configuration found"}
+{"time":"2026-09-22T21:09:09.28935+01:00","level":"INFO","source":{"function":"github.com/charmbracelet/crush/internal/agent/tools/mcp.Initialize","file":"github.com/charmbracelet/crush/internal/agent/tools/mcp/init.go","line":167},"msg":"Initializing MCP clients"}

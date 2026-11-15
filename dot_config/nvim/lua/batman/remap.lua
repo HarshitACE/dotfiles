@@ -1,0 +1,62 @@
+vim.g.mapleader = " "
+
+-- Explorer
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
+
+-- File
+vim.keymap.set("n", "<leader>fs", vim.cmd.w)
+
+-- LSP format: whole buffer (normal) or selection (visual)
+vim.keymap.set({ "n", "v" }, "<leader>vf", function()
+  vim.lsp.buf.format({ async = true })
+end, { desc = "Format buffer or selection" })
+
+-- Quit
+vim.keymap.set("n", "<leader>q", vim.cmd.q)
+
+-- Modes
+vim.keymap.set("i", "jk", "<Esc>")
+
+-- Tabs
+vim.keymap.set("n", "<leader>tt", vim.cmd.tabnew)
+vim.keymap.set("n", "<leader>tn", vim.cmd.tabnext)
+vim.keymap.set("n", "<leader>tp", vim.cmd.tabprevious)
+vim.keymap.set("n", "<leader>tc", vim.cmd.tabclose)
+
+-- Windows
+vim.keymap.set("n", "<leader>ws", vim.cmd.split)
+vim.keymap.set("n", "<leader>wv", vim.cmd.vsplit)
+
+-- Clipboard
+vim.keymap.set("x", "<leader>cp", [["_dP]])
+vim.keymap.set({ "n", "v" }, "<leader>cy", [["+y]])
+vim.keymap.set("n", "<leader>cY", [["+Y]])
+
+-- Delete without yanking
+vim.keymap.set({ "n", "v" }, "<leader>x", [["_d]])
+
+-- Quickfix
+vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
+vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
+
+-- Location list
+vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
+vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
+
+-- Search
+vim.keymap.set("n", "<leader>ss", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+
+-- Utilities. These live under <leader>u so that <leader>x stays a complete
+-- mapping rather than a prefix, which would stall it for 'timeoutlen'.
+vim.keymap.set("n", "<leader>ux", "<cmd>!chmod +x %<CR>", { silent = true })
+vim.keymap.set("n", "<leader>ur", "<cmd>CellularAutomaton make_it_rain<CR>")
+
+-- Source config
+vim.keymap.set("n", "<leader><leader>", "<cmd>source<CR>")
+
+-- Dotfiles
+vim.keymap.set(
+    "n",
+    "<leader>fn",
+    "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>"
+)

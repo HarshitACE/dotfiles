@@ -1,0 +1,2 @@
+require("batman")
+print("                      -Alfred")

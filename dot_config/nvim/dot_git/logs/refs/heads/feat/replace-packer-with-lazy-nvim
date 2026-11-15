@@ -1,0 +1,2 @@
+0000000000000000000000000000000000000000 2d08d154c4cc2f1029da14fc2cc52e4918ec85a4 Harshit Gautam <batman@macbook-pro.home> 1774468899 +0000	branch: Created from refs/remotes/origin/feat/replace-packer-with-lazy-nvim
+2d08d154c4cc2f1029da14fc2cc52e4918ec85a4 791e45758a129bc276b975f205e71cab42eee8af Harshit Gautam <batman@macbook-pro.home> 1774471193 +0000	commit: feat: update as it for nvim0.11

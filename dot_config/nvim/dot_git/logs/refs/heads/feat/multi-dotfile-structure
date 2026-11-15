@@ -1,0 +1,9 @@
+0000000000000000000000000000000000000000 7f2c3dba1743f2abcd6587312b7123124066df15 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1774530920 +0000	branch: Created from refs/remotes/origin/feat/multi-dotfile-structure
+7f2c3dba1743f2abcd6587312b7123124066df15 f5ab8781469d409e916fdaea1941652d0ad4ac14 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839169 +0100	commit: feat: add aerospace config
+f5ab8781469d409e916fdaea1941652d0ad4ac14 7f2c3dba1743f2abcd6587312b7123124066df15 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839263 +0100	rebase (finish): refs/heads/feat/multi-dotfile-structure onto 7f2c3dba1743f2abcd6587312b7123124066df15
+7f2c3dba1743f2abcd6587312b7123124066df15 9dd4e0f6f9173205f4503cafacc886123135a091 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839265 +0100	pull --no-edit: Fast-forward
+9dd4e0f6f9173205f4503cafacc886123135a091 72c55ce487bdf65ea045f2ed5c7740004ea956e6 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785839509 +0100	commit: feat: Add aerospace config
+72c55ce487bdf65ea045f2ed5c7740004ea956e6 039df4afe6b1dc5205cb46e9bafb4b4dca1d98d5 Harshit Gautam <batman@Harshits-MacBook-Pro.local> 1785840084 +0100	commit: feat: add typst
+039df4afe6b1dc5205cb46e9bafb4b4dca1d98d5 1d16873fa90f8ce5f0d806c196b9fa2b0f76babe Harshit Gautam <batman@unknown.home> 1787606924 +0100	pull: Fast-forward
+1d16873fa90f8ce5f0d806c196b9fa2b0f76babe 01e92c56f7c016b1e3c04b0f5ed69482025807a0 Harshit Gautam <batman@harshits-mbp.home> 1790107343 +0100	commit: feat: add clipboard
+01e92c56f7c016b1e3c04b0f5ed69482025807a0 bd14111013d1e41ef37da8a49b6a17c654f9954d Harshit Gautam <batman@harshits-mbp.home> 1790107691 +0100	rebase (finish): refs/heads/feat/multi-dotfile-structure onto a18f53ab9b0f155f4e743727a55b1517f7b67312
